@@ -1,0 +1,17 @@
+spring:
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+databases:
+  app:
+    datasource:
+      url: jdbc:postgresql://postgres-db:5432/test
+      username: appuser
+      password: appuser
+  liquibase:
+    datasource:
+      url: ${databases.app.datasource.url}
+      username: admin
+      password: admin
+      hikari:
+        maximum-pool-size: 1

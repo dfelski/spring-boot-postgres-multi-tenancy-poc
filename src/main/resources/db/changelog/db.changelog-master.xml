@@ -1,0 +1,31 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="test" id="initial">
+        <createTable tableName="test_data">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="test_data_id" />
+            </column>
+            <column name="value" type="TEXT">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="tenant" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="test" id="enable_rls">
+        <sql>
+            ALTER TABLE test_data ENABLE ROW LEVEL SECURITY;
+            DROP POLICY IF EXISTS test_data_tenant_isolation_policy ON test_data;
+            CREATE POLICY test_data_tenant_isolation_policy ON test_data
+            USING (tenant = current_setting('app.tenant')::VARCHAR);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
